@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from torch.utils.data import DataLoader
 
-from src.utils.dataset import Landslide_Dataset
+from src.utils.dataset import CAS_Landslide_Dataset
 from src.model import LandslideMappingModel
 
 
@@ -16,7 +16,7 @@ def test(config):
     y_test_dir = os.path.join(config["data_path"], "test", "mask")
 
     # dataset
-    test_dataset = Landslide_Dataset(x_test_dir, y_test_dir)
+    test_dataset = CAS_Landslide_Dataset(x_test_dir, y_test_dir)
 
     # data loader
     test_loader = DataLoader(

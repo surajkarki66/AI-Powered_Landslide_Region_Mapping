@@ -8,3 +8,4 @@ onnx
 onnxruntime
 typer
 pyyaml
+h5py

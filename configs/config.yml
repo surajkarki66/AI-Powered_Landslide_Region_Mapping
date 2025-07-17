@@ -3,14 +3,14 @@
 # Training Configuration
 train:
   data_path: "./data/CAS_Landslide_Dataset_UAV/"
-  batch_size: 16
+  batch_size: 32
   epochs: 2
   learning_rate: 0.001
   model_output_path: "assets/landslide_model.pt"
   metrics_output_path: "assets/metrics.json"
   arch: "Unet"
   encoder_name: "resnet50"
-  in_channels: 3
+  in_channels: 14
   out_classes: 1
   accelerator: "gpu"
   devices: "auto"

@@ -1,6 +1,5 @@
 import typer
 import yaml
-from pathlib import Path
 
 from src.pipeline.train import train as train_model
 from src.pipeline.test import test as test_model

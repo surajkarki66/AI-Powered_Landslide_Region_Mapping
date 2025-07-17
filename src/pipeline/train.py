@@ -9,7 +9,7 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 
-from src.utils.dataset import Landslide_Dataset
+from src.utils.dataset import CAS_Landslide_Dataset
 from src.model import LandslideMappingModel
 
 def train(config):
@@ -18,13 +18,10 @@ def train(config):
     y_train_dir = os.path.join(config["data_path"], "train", "mask")
     x_valid_dir = os.path.join(config["data_path"], "val", "img")
     y_valid_dir = os.path.join(config["data_path"], "val", "mask")
-    x_test_dir = os.path.join(config["data_path"], "test", "img")
-    y_test_dir = os.path.join(config["data_path"], "test", "mask")
 
     # datasets
-    train_dataset = Landslide_Dataset(x_train_dir, y_train_dir)
-    valid_dataset = Landslide_Dataset(x_valid_dir, y_valid_dir)
-    test_dataset = Landslide_Dataset(x_test_dir, y_test_dir)
+    train_dataset = CAS_Landslide_Dataset(x_train_dir, y_train_dir)
+    valid_dataset = CAS_Landslide_Dataset(x_valid_dir, y_valid_dir)
 
     # data loaders
     train_loader = DataLoader(
@@ -32,9 +29,6 @@ def train(config):
     )
     valid_loader = DataLoader(
         valid_dataset, batch_size=config["batch_size"], shuffle=False, num_workers=4
-    )
-    test_loader = DataLoader(
-        test_dataset, batch_size=config["batch_size"], shuffle=False, num_workers=4
     )
 
     # model
