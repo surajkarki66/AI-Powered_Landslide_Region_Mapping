@@ -1,0 +1,10 @@
+lightning
+segmentation-models-pytorch
+pandas
+matplotlib
+seaborn
+opencv-python
+onnx
+onnxruntime
+typer
+pyyaml
