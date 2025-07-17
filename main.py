@@ -6,6 +6,9 @@ from src.pipeline.train import train as train_model
 from src.pipeline.test import test as test_model
 from src.pipeline.export import export as export_model
 
+import torch
+torch.cuda.empty_cache()
+
 app = typer.Typer()
 
 def load_config():

@@ -9,8 +9,8 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 
-from utils.dataset import Landslide_Dataset
-from model import LandslideMappingModel
+from src.utils.dataset import Landslide_Dataset
+from src.model import LandslideMappingModel
 
 def train(config):
     # data paths

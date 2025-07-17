@@ -2,7 +2,8 @@ import torch
 import onnx
 import onnxruntime
 import numpy as np
-from model import LandslideMappingModel
+
+from src.model import LandslideMappingModel
 
 def export(config):
     # model to export
