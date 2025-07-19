@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 
 from src.utils.dataset import Landslide4SenseDataset
-from src.model import LandslideMappingModel
+from src.model import Landslide4SenseMappingModel
 
 def train(config):
     # data paths
@@ -32,12 +32,14 @@ def train(config):
     )
 
     # model
-    model = LandslideMappingModel(
+    model = Landslide4SenseMappingModel(
         config["arch"],
         config["encoder_name"],
+        config["encoder_weights"],
         in_channels=config["in_channels"],
         out_classes=config["out_classes"],
         learning_rate=config["learning_rate"],
+        loss_function_name=config["loss_function"],
     )
 
     # trainer
@@ -46,10 +48,7 @@ def train(config):
         mode=config["early_stopping"]["mode"],
         patience=config["early_stopping"]["patience"],
     )
-    print(early_stopping)
-    print(config["early_stopping"]["monitor"])
-    print(config["early_stopping"]["mode"])
-    print(config["early_stopping"]["patience"])
+
     trainer = L.Trainer(
         max_epochs=config["epochs"],
         log_every_n_steps=1,

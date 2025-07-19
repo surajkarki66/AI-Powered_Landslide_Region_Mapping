@@ -4,15 +4,18 @@ import pandas as pd
 import lightning as L
 import segmentation_models_pytorch as smp
 
+from src.pipeline.loss import get_loss_fn
+
 
 class CASLandslideMappingModel(L.LightningModule):
     def __init__(
-        self, arch, encoder_name, in_channels, out_classes, learning_rate, **kwargs
+        self, arch, encoder_name, encoder_weights, in_channels, out_classes, learning_rate, loss_function_name, **kwargs
     ):
         super().__init__()
         self.model = smp.create_model(
             arch,
             encoder_name=encoder_name,
+            encoder_weights=encoder_weights,
             in_channels=in_channels,
             classes=out_classes,
             **kwargs,
@@ -23,8 +26,8 @@ class CASLandslideMappingModel(L.LightningModule):
         self.register_buffer("std", torch.tensor(params["std"]).view(1, 3, 1, 1))
         self.register_buffer("mean", torch.tensor(params["mean"]).view(1, 3, 1, 1))
 
-        # for image segmentation dice loss could be the best first choice
-        self.loss_fn = smp.losses.DiceLoss(smp.losses.BINARY_MODE, from_logits=True)
+        # get loss function
+        self.loss_fn = get_loss_fn(loss_function_name)
 
         self.training_step_outputs = []
         self.validation_step_outputs = []
@@ -207,17 +210,18 @@ class CASLandslideMappingModel(L.LightningModule):
         }
     
 
-class LandslideMappingModel(L.LightningModule):
-    def __init__(self, arch, encoder_name, in_channels, out_classes, learning_rate, **kwargs):
+class Landslide4SenseMappingModel(L.LightningModule):
+    def __init__(self, arch, encoder_name, encoder_weights, in_channels, out_classes, learning_rate, loss_function_name, **kwargs):
         super().__init__()
         self.model = smp.create_model(
             arch,
             encoder_name=encoder_name,
+            encoder_weights=encoder_weights,
             in_channels=in_channels,
             classes=out_classes,
             **kwargs,
         )
-        self.loss_fn = smp.losses.DiceLoss(smp.losses.BINARY_MODE, from_logits=True)
+        self.loss_fn = get_loss_fn(loss_function_name)
 
         self.training_step_outputs = []
         self.validation_step_outputs = []
