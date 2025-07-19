@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from torch.utils.data import DataLoader
 
-from src.utils.dataset import CAS_Landslide_Dataset
+from src.utils.dataset import Landslide4SenseDataset
 from src.model import LandslideMappingModel
 
 
@@ -16,7 +16,7 @@ def test(config):
     y_test_dir = os.path.join(config["data_path"], "test", "mask")
 
     # dataset
-    test_dataset = CAS_Landslide_Dataset(x_test_dir, y_test_dir)
+    test_dataset = Landslide4SenseDataset(x_test_dir, y_test_dir)
 
     # data loader
     test_loader = DataLoader(
@@ -29,6 +29,7 @@ def test(config):
         config["encoder_name"],
         in_channels=config["in_channels"],
         out_classes=config["out_classes"],
+        learning_rate=config["learning_rate"],
     )
     model.load_state_dict(torch.load(config["model_output_path"]))
 
@@ -52,7 +53,7 @@ def test(config):
     print("Test metrics saved to", metrics_output_path)
 
     # visualize predictions
-    visualize_predictions(model, test_loader)
+    #visualize_predictions(model, test_loader)
 
 
 def visualize_predictions(model, test_loader):

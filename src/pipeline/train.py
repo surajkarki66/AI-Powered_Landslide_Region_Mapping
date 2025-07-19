@@ -9,7 +9,7 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 
-from src.utils.dataset import CAS_Landslide_Dataset
+from src.utils.dataset import Landslide4SenseDataset
 from src.model import LandslideMappingModel
 
 def train(config):
@@ -20,8 +20,8 @@ def train(config):
     y_valid_dir = os.path.join(config["data_path"], "val", "mask")
 
     # datasets
-    train_dataset = CAS_Landslide_Dataset(x_train_dir, y_train_dir)
-    valid_dataset = CAS_Landslide_Dataset(x_valid_dir, y_valid_dir)
+    train_dataset = Landslide4SenseDataset(x_train_dir, y_train_dir)
+    valid_dataset = Landslide4SenseDataset(x_valid_dir, y_valid_dir)
 
     # data loaders
     train_loader = DataLoader(
@@ -46,6 +46,10 @@ def train(config):
         mode=config["early_stopping"]["mode"],
         patience=config["early_stopping"]["patience"],
     )
+    print(early_stopping)
+    print(config["early_stopping"]["monitor"])
+    print(config["early_stopping"]["mode"])
+    print(config["early_stopping"]["patience"])
     trainer = L.Trainer(
         max_epochs=config["epochs"],
         log_every_n_steps=1,

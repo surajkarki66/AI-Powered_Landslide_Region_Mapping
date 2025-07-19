@@ -2,12 +2,12 @@
 
 # Training Configuration
 train:
-  data_path: "./data/CAS_Landslide_Dataset_UAV/"
+  data_path: "./data/Landslide4Sense/Landslide4Sense_2022"
   batch_size: 32
-  epochs: 2
+  epochs: 300
   learning_rate: 0.001
-  model_output_path: "assets/landslide_model.pt"
-  metrics_output_path: "assets/metrics.json"
+  model_output_path: "assets/landslide4sense_model_unet_resnet50.pt"
+  metrics_output_path: "assets/validation_metrics.json"
   arch: "Unet"
   encoder_name: "resnet50"
   in_channels: 14
@@ -18,19 +18,20 @@ train:
   early_stopping:
     monitor: "valid_dataset_iou"
     mode: "max"
-    patience: 30
+    patience: 150
 
 # Testing Configuration
 test:
-  data_path: "data/train"
+  data_path: "./data/Landslide4Sense/Landslide4Sense_2022"
   batch_size: 32
-  model_output_path: "assets/landslide_model.pt"
-  metrics_output_path: "assets/metrics.json"
-  arch: "FPN"
-  encoder_name: "resnext50_32x4d"
-  in_channels: 3
+  model_output_path: "assets/landslide4sense_model_unet_resnet50.pt"
+  metrics_output_path: "assets/test_metrics.json"
+  arch: "Unet"
+  encoder_name: "resnet50"
+  in_channels: 14
   out_classes: 1
   accelerator: "gpu"
+  learning_rate: 0.001
   devices: "auto"
   default_root_dir: "./checkpoints"
 
