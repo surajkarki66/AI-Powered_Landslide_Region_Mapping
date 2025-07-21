@@ -9,8 +9,8 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 
-from src.utils.dataset import Landslide4SenseDataset
-from src.model import Landslide4SenseMappingModel
+from src.utils.dataset import CAS_Landslide_Dataset
+from src.model import CASLandslideMappingModel
 
 def train(config):
     # data paths
@@ -20,8 +20,8 @@ def train(config):
     y_valid_dir = os.path.join(config["data_path"], "val", "mask")
 
     # datasets
-    train_dataset = Landslide4SenseDataset(x_train_dir, y_train_dir)
-    valid_dataset = Landslide4SenseDataset(x_valid_dir, y_valid_dir)
+    train_dataset = CAS_Landslide_Dataset(x_train_dir, y_train_dir)
+    valid_dataset = CAS_Landslide_Dataset(x_valid_dir, y_valid_dir)
 
     # data loaders
     train_loader = DataLoader(
@@ -32,7 +32,7 @@ def train(config):
     )
 
     # model
-    model = Landslide4SenseMappingModel(
+    model = CASLandslideMappingModel(
         config["arch"],
         config["encoder_name"],
         config["encoder_weights"],

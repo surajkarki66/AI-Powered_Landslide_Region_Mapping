@@ -10,7 +10,6 @@ train:
   metrics_output_path: "assets/validation_metrics.json"
   arch: "Unet"
   encoder_name: "resnet50"
-  encoder_weights: "imagenet"   #[imagenet, ssl, swsl, instagram, imagenet+5k, imagenet+background, advprop, noisy-student, imagenet21k]
   in_channels: 14
   out_classes: 1
   loss_function: "FocalLoss"                         #[DiceLoss, JaccardLoss, TverskyLoss, FocalLoss, SoftBCE, MCCLoss]
@@ -35,7 +34,7 @@ test:
   accelerator: "gpu"
   learning_rate: 0.001
   devices: "auto"
-  default_root_dir: "./assets/checkpoints"
+  default_root_dir: "./checkpoints"
 
 # Export Configuration
 export:
