@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 
 from src.utils.dataset import Landslide4SenseDataset
-from src.model import LandslideMappingModel
+from src.model import Landslide4SenseMappingModel
 
 
 def test(config):
@@ -24,9 +24,11 @@ def test(config):
     )
 
     # model
-    model = LandslideMappingModel(
+    model = Landslide4SenseMappingModel(
         config["arch"],
         config["encoder_name"],
+        encoder_weights=config["encoder_weights"],
+        loss_function_name=config["loss_function"],
         in_channels=config["in_channels"],
         out_classes=config["out_classes"],
         learning_rate=config["learning_rate"],

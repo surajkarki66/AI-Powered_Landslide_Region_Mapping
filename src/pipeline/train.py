@@ -56,6 +56,7 @@ def train(config):
         accelerator=config["accelerator"],
         devices=config["devices"],
         default_root_dir=config["default_root_dir"],
+        strategy='ddp_find_unused_parameters_true',
     )
 
     # fit the model

@@ -2,21 +2,21 @@
 
 # Training Configuration
 train:
-  data_path: "./data/Landslide4Sense/Landslide4Sense_2022"
+  data_path: "./data/Landslide4Sense_2022"
   batch_size: 32
   epochs: 300
   learning_rate: 0.001
-  model_output_path: "assets/landslide4sense_model_unet_resnet50.pt"
+  model_output_path: "assets/landslide4sense_model_unet_efficientnet-b5.pt"
   metrics_output_path: "assets/validation_metrics.json"
   arch: "Unet"
-  encoder_name: "resnet50"
+  encoder_name: "efficientnet-b5"
   encoder_weights: "imagenet"   #[imagenet, ssl, swsl, instagram, imagenet+5k, imagenet+background, advprop, noisy-student, imagenet21k]
   in_channels: 14
   out_classes: 1
   loss_function: "FocalLoss"                         #[DiceLoss, JaccardLoss, TverskyLoss, FocalLoss, SoftBCE, MCCLoss]
   accelerator: "gpu"
   devices: "auto"
-  default_root_dir: "./checkpoints"
+  default_root_dir: "assets/checkpoints"
   early_stopping:
     monitor: "valid_f1_score"
     mode: "max"
@@ -24,12 +24,14 @@ train:
 
 # Testing Configuration
 test:
-  data_path: "./data/Landslide4Sense/Landslide4Sense_2022"
+  data_path: "./data/Landslide4Sense_2022"
   batch_size: 32
-  model_output_path: "assets/landslide4sense_model_unet_resnet50.pt"
+  model_output_path: "assets/landslide4sense_model_unet_efficientnet-b5.pt"
   metrics_output_path: "assets/test_metrics.json"
   arch: "Unet"
-  encoder_name: "resnet50"
+  encoder_name: "efficientnet-b5"
+  encoder_weights: "imagenet"
+  loss_function: "FocalLoss"
   in_channels: 14
   out_classes: 1
   accelerator: "gpu"
@@ -39,10 +41,13 @@ test:
 
 # Export Configuration
 export:
-  model_path: "assets/landslide_model.pt"
-  onnx_model_output_path: "assets/landslide_model.onnx"
-  input_shape: [1, 3, 512, 512]
-  arch: "FPN"
-  encoder_name: "resnext50_32x4d"
-  in_channels: 3
+  model_path: "assets/landslide4sense_model_unet_efficientnet-b5.pt"
+  onnx_model_output_path: "assets/landslide4sense_model_unet_efficientnet-b5.onnx"
+  input_shape: [1, 14, 128, 128]
+  arch: "Unet"
+  encoder_name: "efficientnet-b5"
+  encoder_weights: "imagenet"
+  loss_function: "FocalLoss"
+  in_channels: 14
   out_classes: 1
+  learning_rate: 0.001
