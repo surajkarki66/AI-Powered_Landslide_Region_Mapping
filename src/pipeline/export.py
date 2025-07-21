@@ -3,13 +3,16 @@ import onnx
 import onnxruntime
 import numpy as np
 
-from src.model import LandslideMappingModel
+from src.model import Landslide4SenseMappingModel
 
 def export(config):
     # model to export
-    model = LandslideMappingModel(
+    model = Landslide4SenseMappingModel(
         config["arch"],
         config["encoder_name"],
+        config["encoder_weights"],
+        learning_rate=config["learning_rate"],
+        loss_function_name=config["loss_function"],
         in_channels=config["in_channels"],
         out_classes=config["out_classes"],
     )
