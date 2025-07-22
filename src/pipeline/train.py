@@ -9,7 +9,7 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 
-from src.utils.dataset import CAS_Landslide_Dataset
+from src.utils.dataset import CAS_Landslide_Dataset_TIFF
 from src.model import CASLandslideMappingModel
 
 def train(config):
@@ -20,8 +20,8 @@ def train(config):
     y_valid_dir = os.path.join(config["data_path"], "val", "mask")
 
     # datasets
-    train_dataset = CAS_Landslide_Dataset(x_train_dir, y_train_dir)
-    valid_dataset = CAS_Landslide_Dataset(x_valid_dir, y_valid_dir)
+    train_dataset = CAS_Landslide_Dataset_TIFF(x_train_dir, y_train_dir)
+    valid_dataset = CAS_Landslide_Dataset_TIFF(x_valid_dir, y_valid_dir)
 
     # data loaders
     train_loader = DataLoader(

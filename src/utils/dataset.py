@@ -1,6 +1,7 @@
 import os
 import cv2
 import h5py
+import rasterio
 import numpy as np
 
 from torch.utils.data import Dataset as BaseDataset
@@ -104,4 +105,51 @@ class Landslide4SenseDataset(BaseDataset):
         """
         Return the number of samples in the dataset.
         """
+        return len(self.ids)
+
+
+
+class CAS_Landslide_Dataset_TIFF(BaseDataset):
+    """
+    Binary Segmentation Dataset for Landslides using .tif images and masks.
+    Args:
+        images_dir (str): Path to input .tif images.
+        masks_dir (str): Path to binary .tif masks (pixel values: 0 for background, 1 for landslide).
+        augmentation (albumentations.Compose): Optional augmentations.
+    """
+
+    def __init__(self, images_dir, masks_dir, augmentation=None):
+        self.ids = sorted(os.listdir(images_dir))
+        self.images_fps = [os.path.join(images_dir, fname) for fname in self.ids]
+        self.masks_fps = [os.path.join(masks_dir, fname) for fname in self.ids]
+        self.augmentation = augmentation
+
+    def __getitem__(self, i):
+        # Read image using rasterio
+        with rasterio.open(self.images_fps[i]) as src_img:
+            image = src_img.read()  # Shape: (C, H, W)
+
+        # Read mask using rasterio
+        with rasterio.open(self.masks_fps[i]) as src_mask:
+            mask = src_mask.read(1)  # Read the first band only, shape: (H, W)
+
+        # Convert image to HWC for albumentations
+        image = np.transpose(image, (1, 2, 0))  # (H, W, C)
+
+        # Convert mask to binary (0 or 1)
+        mask = (mask > 0).astype("float32")
+        mask = np.expand_dims(mask, axis=-1)  # (H, W, 1)
+
+        # Apply augmentations
+        if self.augmentation:
+            augmented = self.augmentation(image=image, mask=mask)
+            image, mask = augmented["image"], augmented["mask"]
+
+        # Convert back to CHW
+        image = image.transpose(2, 0, 1)  # (C, H, W)
+        mask = mask.transpose(2, 0, 1)    # (1, H, W)
+
+        return image, mask
+
+    def __len__(self):
         return len(self.ids)

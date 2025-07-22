@@ -9,3 +9,4 @@ onnxruntime
 typer
 pyyaml
 h5py
+rasterio
