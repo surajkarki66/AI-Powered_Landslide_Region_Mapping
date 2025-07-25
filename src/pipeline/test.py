@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 
 from torch.utils.data import DataLoader
 
-from src.utils.dataset import Landslide4SenseDataset
-from src.model import Landslide4SenseMappingModel
+from src.utils.dataset import Landslide4SenseDataset, CAS_Landslide_Dataset_TIFF
+from src.models.Landslide4SenseModel import Landslide4SenseMappingModel
+from src.models.CASLandslideModel import CASLandslideMappingModel
 
 
 def test(config):
@@ -15,23 +16,40 @@ def test(config):
     x_test_dir = os.path.join(config["data_path"], "test", "img")
     y_test_dir = os.path.join(config["data_path"], "test", "mask")
 
-    # dataset
-    test_dataset = Landslide4SenseDataset(x_test_dir, y_test_dir)
+    # model selection
+    model_type = config.get("model_type")
+    if model_type == "CASLandslide":
+        model = CASLandslideMappingModel(
+            config["arch"],
+            config["encoder_name"],
+            config["encoder_weights"],
+            in_channels=config["in_channels"],
+            out_classes=config["out_classes"],
+            learning_rate=config["learning_rate"],
+            loss_function_name=config["loss_function"],
+        )
+        # datasets
+        test_dataset = CAS_Landslide_Dataset_TIFF(x_test_dir, y_test_dir)
 
+    elif model_type == "Landslide4Sense":
+        model = Landslide4SenseMappingModel(
+            config["arch"],
+            config["encoder_name"],
+            config["encoder_weights"],
+            in_channels=config["in_channels"],
+            out_classes=config["out_classes"],
+            learning_rate=config["learning_rate"],
+            loss_function_name=config["loss_function"],
+        )
+        # datasets
+        test_dataset = Landslide4SenseDataset(x_test_dir, y_test_dir)
+        
+    else:
+        raise ValueError(f"Unknown model_type: {model_type}")
+    
     # data loader
     test_loader = DataLoader(
         test_dataset, batch_size=config["batch_size"], shuffle=False, num_workers=4
-    )
-
-    # model
-    model = Landslide4SenseMappingModel(
-        config["arch"],
-        config["encoder_name"],
-        encoder_weights=config["encoder_weights"],
-        loss_function_name=config["loss_function"],
-        in_channels=config["in_channels"],
-        out_classes=config["out_classes"],
-        learning_rate=config["learning_rate"],
     )
     model.load_state_dict(torch.load(config["model_output_path"]))
 
@@ -55,7 +73,8 @@ def test(config):
     print("Test metrics saved to", metrics_output_path)
 
     # visualize predictions
-    #visualize_predictions(model, test_loader)
+    if model_type == "CASLandslide":
+        visualize_predictions(model, test_loader)
 
 
 def visualize_predictions(model, test_loader):

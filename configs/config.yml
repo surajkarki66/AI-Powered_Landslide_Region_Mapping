@@ -1,4 +1,4 @@
-# Configuration for Landslide Mapping
+# Configuration for Landslide Mapping Model Training, Testing, and Exporting
 
 # Training Configuration
 train:
@@ -8,6 +8,7 @@ train:
   learning_rate: 0.001
   model_output_path: "assets/landslide4sense_model_unet_efficientnet-b5.pt"
   metrics_output_path: "assets/validation_metrics.json"
+  model_type: "Landslide4Sense"  # Options: Landslide4Sense, CASLandslide
   arch: "Unet"
   encoder_name: "efficientnet-b5"
   encoder_weights: "imagenet"   #[imagenet, ssl, swsl, instagram, imagenet+5k, imagenet+background, advprop, noisy-student, imagenet21k]
@@ -28,6 +29,7 @@ test:
   batch_size: 32
   model_output_path: "assets/landslide4sense_model_unet_efficientnet-b5.pt"
   metrics_output_path: "assets/test_metrics.json"
+  model_type: "Landslide4Sense"  # Options: Landslide4Sense, CASLandslide
   arch: "Unet"
   encoder_name: "efficientnet-b5"
   encoder_weights: "imagenet"
@@ -44,6 +46,7 @@ export:
   model_path: "assets/landslide4sense_model_unet_efficientnet-b5.pt"
   onnx_model_output_path: "assets/landslide4sense_model_unet_efficientnet-b5.onnx"
   input_shape: [1, 14, 128, 128]
+  model_type: "Landslide4Sense"  # Options: Landslide4Sense, CASLandslide
   arch: "Unet"
   encoder_name: "efficientnet-b5"
   encoder_weights: "imagenet"

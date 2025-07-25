@@ -3,19 +3,37 @@ import onnx
 import onnxruntime
 import numpy as np
 
-from src.model import Landslide4SenseMappingModel
+from src.models.Landslide4SenseModel import Landslide4SenseMappingModel
+from src.models.CASLandslideModel import CASLandslideMappingModel
 
 def export(config):
-    # model to export
-    model = Landslide4SenseMappingModel(
-        config["arch"],
-        config["encoder_name"],
-        config["encoder_weights"],
-        learning_rate=config["learning_rate"],
-        loss_function_name=config["loss_function"],
-        in_channels=config["in_channels"],
-        out_classes=config["out_classes"],
-    )
+    # model selection
+    model = None
+    model_type = config.get("model_type")
+    if model_type == "CASLandslide":
+        model = CASLandslideMappingModel(
+            config["arch"],
+            config["encoder_name"],
+            config["encoder_weights"],
+            in_channels=config["in_channels"],
+            out_classes=config["out_classes"],
+            learning_rate=config["learning_rate"],
+            loss_function_name=config["loss_function"],
+        )
+    
+    elif model_type == "Landslide4Sense":
+        model = Landslide4SenseMappingModel(
+            config["arch"],
+            config["encoder_name"],
+            config["encoder_weights"],
+            in_channels=config["in_channels"],
+            out_classes=config["out_classes"],
+            learning_rate=config["learning_rate"],
+            loss_function_name=config["loss_function"],
+        )
+       
+    else:
+        raise ValueError(f"Unknown model_type: {model_type}")
 
     # load trained model
     model.load_state_dict(torch.load(config["model_path"]))

@@ -9,8 +9,9 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 
-from src.utils.dataset import CAS_Landslide_Dataset_TIFF
-from src.model import CASLandslideMappingModel
+from src.utils.dataset import CAS_Landslide_Dataset_TIFF, Landslide4SenseDataset
+from src.models.CASLandslideModel import CASLandslideMappingModel
+from src.models.Landslide4SenseModel import Landslide4SenseMappingModel
 
 def train(config):
     # data paths
@@ -19,27 +20,47 @@ def train(config):
     x_valid_dir = os.path.join(config["data_path"], "val", "img")
     y_valid_dir = os.path.join(config["data_path"], "val", "mask")
 
-    # datasets
-    train_dataset = CAS_Landslide_Dataset_TIFF(x_train_dir, y_train_dir)
-    valid_dataset = CAS_Landslide_Dataset_TIFF(x_valid_dir, y_valid_dir)
+    train_dataset = None
+    valid_dataset = None
 
+    # model selection
+    model_type = config.get("model_type")
+    if model_type == "CASLandslide":
+        model = CASLandslideMappingModel(
+            config["arch"],
+            config["encoder_name"],
+            config["encoder_weights"],
+            in_channels=config["in_channels"],
+            out_classes=config["out_classes"],
+            learning_rate=config["learning_rate"],
+            loss_function_name=config["loss_function"],
+        )
+        # datasets
+        train_dataset = CAS_Landslide_Dataset_TIFF(x_train_dir, y_train_dir)
+        valid_dataset = CAS_Landslide_Dataset_TIFF(x_valid_dir, y_valid_dir)
+
+    elif model_type == "Landslide4Sense":
+        model = Landslide4SenseMappingModel(
+            config["arch"],
+            config["encoder_name"],
+            config["encoder_weights"],
+            in_channels=config["in_channels"],
+            out_classes=config["out_classes"],
+            learning_rate=config["learning_rate"],
+            loss_function_name=config["loss_function"],
+        )
+        # datasets
+        train_dataset = Landslide4SenseDataset(x_train_dir, y_train_dir)
+        valid_dataset = Landslide4SenseDataset(x_valid_dir, y_valid_dir)
+    else:
+        raise ValueError(f"Unknown model_type: {model_type}")
+    
     # data loaders
     train_loader = DataLoader(
         train_dataset, batch_size=config["batch_size"], shuffle=True, num_workers=4
     )
     valid_loader = DataLoader(
         valid_dataset, batch_size=config["batch_size"], shuffle=False, num_workers=4
-    )
-
-    # model
-    model = CASLandslideMappingModel(
-        config["arch"],
-        config["encoder_name"],
-        config["encoder_weights"],
-        in_channels=config["in_channels"],
-        out_classes=config["out_classes"],
-        learning_rate=config["learning_rate"],
-        loss_function_name=config["loss_function"],
     )
 
     # trainer
