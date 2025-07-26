@@ -3,15 +3,15 @@ import streamlit as st
 
 # --- PAGE SETUP ---
 home_page = st.Page(
-    "views/home.py",
+    "src/views/home.py",
     title="Home",
     icon=":material/home:",
     default=True,
 )
 
-landslide_segmentation_page = st.Page(
-    "views/landslide_segmentation.py",
-    title="Landslide Segmentation",
+uav_landslide_segmentation_page = st.Page(
+    "src/views/uav_landslide_segmentation.py",
+    title="UAV Landslide Segmentation",
     icon="🪨",
 )
 
@@ -20,7 +20,7 @@ landslide_segmentation_page = st.Page(
 pg = st.navigation(
     {
         "Info": [home_page],
-        "Mapping": [landslide_segmentation_page],
+        "Mapping": [uav_landslide_segmentation_page],
     }
 )
 

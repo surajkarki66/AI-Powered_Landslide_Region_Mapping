@@ -10,3 +10,4 @@ typer
 pyyaml
 h5py
 rasterio
+scikit-image

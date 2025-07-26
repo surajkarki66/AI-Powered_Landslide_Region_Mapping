@@ -54,3 +54,11 @@ export:
   in_channels: 14
   out_classes: 1
   learning_rate: 0.001
+
+deployment:
+  landslide4sense:
+    model_path: "landslide4sense_model_unet_efficientnet-b5.onnx"
+    input_shape: [1, 14, 128, 128]
+  caslandslide:
+    model_path: "assets/cas_landslide_uav_model_unet_resnet50.onnx"
+    input_shape: [1, 3, 512, 512]
