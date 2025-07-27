@@ -11,7 +11,7 @@ torch.cuda.empty_cache()
 app = typer.Typer()
 
 def load_config():
-    with open("configs/config.yml", "r") as f:
+    with open("configs/config.yaml", "r") as f:
         config = yaml.safe_load(f)
     return config
 
