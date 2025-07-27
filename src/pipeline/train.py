@@ -19,9 +19,12 @@ def train(config):
     y_train_dir = os.path.join(config["data_path"], "train", "mask")
     x_valid_dir = os.path.join(config["data_path"], "val", "img")
     y_valid_dir = os.path.join(config["data_path"], "val", "mask")
+    x_test_dir = os.path.join(config["data_path"], "test", "img")
+    y_test_dir = os.path.join(config["data_path"], "test", "mask")
 
     train_dataset = None
     valid_dataset = None
+    test_dataset = None
 
     # model selection
     model_type = config.get("model_type")
@@ -38,6 +41,7 @@ def train(config):
         # datasets
         train_dataset = CAS_Landslide_Dataset_TIFF(x_train_dir, y_train_dir)
         valid_dataset = CAS_Landslide_Dataset_TIFF(x_valid_dir, y_valid_dir)
+        test_dataset = CAS_Landslide_Dataset_TIFF(x_test_dir, y_test_dir)
 
     elif model_type == "Landslide4Sense":
         model = Landslide4SenseMappingModel(
@@ -52,6 +56,7 @@ def train(config):
         # datasets
         train_dataset = Landslide4SenseDataset(x_train_dir, y_train_dir)
         valid_dataset = Landslide4SenseDataset(x_valid_dir, y_valid_dir)
+        test_dataset = Landslide4SenseDataset(x_test_dir, y_test_dir)
     else:
         raise ValueError(f"Unknown model_type: {model_type}")
     
@@ -62,7 +67,9 @@ def train(config):
     valid_loader = DataLoader(
         valid_dataset, batch_size=config["batch_size"], shuffle=False, num_workers=4
     )
-
+    test_loader = DataLoader(
+        test_dataset, batch_size=config["batch_size"], shuffle=False, num_workers=4
+    )
     # trainer
     early_stopping = EarlyStopping(
         monitor=config["early_stopping"]["monitor"],
@@ -92,15 +99,18 @@ def train(config):
 
     # validate
     validate(trainer, model, valid_loader, config)
+    
+    # test
+    test(trainer, model, test_loader, config)
 
     # save the model
-    model.save_pretrained(config["model_output_path"], dataset=config["model_type"])
+    model.model.save_pretrained(config["model_output_path"], dataset=config["model_type"])
 
     # load the model
     restored_model = smp.from_pretrained(config["model_output_path"])
     
     if restored_model:
-        print(f"Model is saved at {config["model_output_path"]}")
+        print(f"Model is saved at {config['model_output_path']}")
 
 
 def plot_metrics():
@@ -136,14 +146,27 @@ def plot_metrics():
 
 
 def validate(trainer, model, valid_loader, config):
-    valid_metrics = trainer.validate(model, dataloaders=valid_loader, verbose=False)
+    valid_metrics = trainer.validate(model, dataloaders=valid_loader, verbose=True)
 
     # Save metrics to a JSON file
-    metrics_output_path = config.get("metrics_output_path", "metrics.json")
+    metrics_output_path = "assets/validation_metrics.json"
     os.makedirs(os.path.dirname(metrics_output_path), exist_ok=True)
 
     with open(metrics_output_path, "w") as f:
         json.dump(valid_metrics, f, indent=4)
 
     print("Validation metrics saved to", metrics_output_path)
+    
+    
+def test(trainer, model, test_loader, config):
+    test_metrics = trainer.test(model, dataloaders=test_loader, verbose=True)
+
+    # Save metrics to a JSON file
+    metrics_output_path = "assets/test_metrics.json"
+    os.makedirs(os.path.dirname(metrics_output_path), exist_ok=True)
+
+    with open(metrics_output_path, "w") as f:
+        json.dump(test_metrics, f, indent=4)
+
+    print("Test metrics saved to", metrics_output_path)
 

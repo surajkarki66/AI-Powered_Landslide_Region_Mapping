@@ -2,17 +2,16 @@
 
 # Training Configuration
 train:
-  data_path: "./data/Landslide4Sense_2022"
-  batch_size: 32
-  epochs: 300
+  data_path: "./data/CAS_Landslide_Dataset_UAV"
+  batch_size: 8
+  epochs: 1
   learning_rate: 0.001
   model_output_path: "assets/cas_landslide_uav_model_unet_resnet50/"
-  metrics_output_path: "assets/validation_metrics.json"
   model_type: "CASLandslide"  # Options: Landslide4Sense, CASLandslide
   arch: "Unet"
-  encoder_name: "efficientnet-b5"
+  encoder_name: "resnet50"
   encoder_weights: "imagenet"   #[imagenet, ssl, swsl, instagram, imagenet+5k, imagenet+background, advprop, noisy-student, imagenet21k]
-  in_channels: 14
+  in_channels: 3
   out_classes: 1
   loss_function: "FocalLoss"                         #[DiceLoss, JaccardLoss, TverskyLoss, FocalLoss, SoftBCE, MCCLoss]
   accelerator: "gpu"
@@ -23,35 +22,18 @@ train:
     mode: "max"
     patience: 150
 
-# Testing Configuration
-test:
-  data_path: "./data/Landslide4Sense_2022"
-  batch_size: 32
-  model_output_path: "assets/landslide4sense_model_unet_efficientnet-b5.pt"
-  metrics_output_path: "assets/test_metrics.json"
-  model_type: "Landslide4Sense"  # Options: Landslide4Sense, CASLandslide
-  arch: "Unet"
-  encoder_name: "efficientnet-b5"
-  encoder_weights: "imagenet"
-  loss_function: "FocalLoss"
-  in_channels: 14
-  out_classes: 1
-  accelerator: "gpu"
-  learning_rate: 0.001
-  devices: "auto"
-  default_root_dir: "./checkpoints"
 
 # Export Configuration
 export:
-  model_path: "assets/landslide4sense_model_unet_efficientnet-b5.pt"
-  onnx_model_output_path: "assets/landslide4sense_model_unet_efficientnet-b5.onnx"
-  input_shape: [1, 14, 128, 128]
-  model_type: "Landslide4Sense"  # Options: Landslide4Sense, CASLandslide
+  model_path: "assets/cas_landslide_uav_model_unet_resnet50/"
+  onnx_model_output_path: "assets/cas_landslide_uav_model_unet_resnet50.onnx"
+  input_shape: [1, 3, 512, 512]
+  model_type: "CASLandslide"  # Options: Landslide4Sense, CASLandslide
   arch: "Unet"
-  encoder_name: "efficientnet-b5"
+  encoder_name: "resnet50"
   encoder_weights: "imagenet"
   loss_function: "FocalLoss"
-  in_channels: 14
+  in_channels: 3
   out_classes: 1
   learning_rate: 0.001
 
