@@ -1,6 +1,6 @@
 import os
 import json
-import torch
+import segmentation_models_pytorch as smp
 import lightning as L
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -93,8 +93,14 @@ def train(config):
     # validate
     validate(trainer, model, valid_loader, config)
 
-    # save model
-    torch.save(model.state_dict(), config["model_output_path"])
+    # save the model
+    model.save_pretrained(config["model_output_path"], dataset=config["model_type"])
+
+    # load the model
+    restored_model = smp.from_pretrained(config["model_output_path"])
+    
+    if restored_model:
+        print(f"Model is saved at {config["model_output_path"]}")
 
 
 def plot_metrics():

@@ -3,6 +3,7 @@ import json
 import torch
 import lightning as L
 import matplotlib.pyplot as plt
+import segmentation_models_pytorch as smp
 
 from torch.utils.data import DataLoader
 
@@ -19,31 +20,12 @@ def test(config):
     # model selection
     model_type = config.get("model_type")
     if model_type == "CASLandslide":
-        model = CASLandslideMappingModel(
-            config["arch"],
-            config["encoder_name"],
-            config["encoder_weights"],
-            in_channels=config["in_channels"],
-            out_classes=config["out_classes"],
-            learning_rate=config["learning_rate"],
-            loss_function_name=config["loss_function"],
-        )
         # datasets
         test_dataset = CAS_Landslide_Dataset_TIFF(x_test_dir, y_test_dir)
 
     elif model_type == "Landslide4Sense":
-        model = Landslide4SenseMappingModel(
-            config["arch"],
-            config["encoder_name"],
-            config["encoder_weights"],
-            in_channels=config["in_channels"],
-            out_classes=config["out_classes"],
-            learning_rate=config["learning_rate"],
-            loss_function_name=config["loss_function"],
-        )
         # datasets
         test_dataset = Landslide4SenseDataset(x_test_dir, y_test_dir)
-        
     else:
         raise ValueError(f"Unknown model_type: {model_type}")
     
@@ -51,7 +33,8 @@ def test(config):
     test_loader = DataLoader(
         test_dataset, batch_size=config["batch_size"], shuffle=False, num_workers=4
     )
-    model.load_state_dict(torch.load(config["model_output_path"]))
+    # load the model
+    restored_model = smp.from_pretrained(config["model_output_path"])
 
     # trainer
     trainer = L.Trainer(
@@ -61,7 +44,7 @@ def test(config):
     )
 
     # test
-    test_metrics = trainer.test(model, dataloaders=test_loader, verbose=False)
+    test_metrics = trainer.test(restored_model, dataloaders=test_loader, verbose=False)
 
     # Save metrics to a JSON file
     metrics_output_path = config.get("metrics_output_path", "metrics.json")

@@ -1,4 +1,5 @@
 import os
+import torch
 import numpy as np
 import rasterio
 import yaml
@@ -9,6 +10,7 @@ from PIL import Image
 from skimage.transform import resize
 
 from src.pipeline.export import check_with_onnx
+from src.models.CASLandslideModel import CASLandslideMappingModel
 
 
 def load_config():
@@ -18,22 +20,41 @@ def load_config():
     return config
 
 
+
+# @st.cache_resource
+# def load_model():
+#     try:
+#         config = load_config()
+#         new_config = {}
+
+#         new_config["onnx_model_output_path"] = config.get("deployment").get("caslandslide", {}).get("model_path")
+#         check_with_onnx(new_config)
+
+#         # Load the ONNX model
+#         session = ort.InferenceSession(new_config["onnx_model_output_path"], providers=["CPUExecutionProvider"])
+#         return session
+#     except Exception as e:
+#         st.error(f"Failed to load ONNX model: {e}")
+#         return None
+
 @st.cache_resource
 def load_model():
     try:
-        config = load_config()
-        new_config = {}
-
-        new_config["onnx_model_output_path"] = config.get("deployment").get("caslandslide", {}).get("model_path")
-        check_with_onnx(new_config)
-
-        # Load the ONNX model
-        session = ort.InferenceSession(new_config["onnx_model_output_path"], providers=["CPUExecutionProvider"])
-        return session
+        model = CASLandslideMappingModel(
+            'Unet',
+            'xception',
+            'imagenet',
+            in_channels=3,
+            out_classes=1,
+            learning_rate=0.001,
+            loss_function_name='FocalLoss',
+        )
+        
+        model.load_state_dict(torch.load('assets/cas_landslide_uav_model_unet_xception.pt'))
+        return model
     except Exception as e:
         st.error(f"Failed to load ONNX model: {e}")
         return None
-
 
 st.markdown("<h3 style='text-align: center;'>Landslide Segmentation using UAV Images</h3>", unsafe_allow_html=True)
 
@@ -86,11 +107,24 @@ if uploaded_file:
     if model_session:
         if st.button("Run Segmentation"):
             img_np = st.session_state["input_tensor"]
-            ort_inputs = {model_session.get_inputs()[0].name: img_np}
-            ort_outs = model_session.run(None, ort_inputs)
+            with torch.inference_mode():
+                model_session.eval()
+                logits = model_session(torch.tensor(img_np))
+                
+            pr_masks = logits.sigmoid()
+            # print(img_np.shape)
+            # ort_inputs = {model_session.get_inputs()[0].name: img_np}
+            # ort_outs = model_session.run(None, ort_inputs)
 
-            mask = ort_outs[0][0]
-            st.success(f"Segmentation completed. Mask shape: {mask.shape}")
+            # mask = ort_outs[0][0]
+            # st.success(f"Segmentation completed. Mask shape: {mask.shape}")
+            # import numpy as np
 
-            mask_img = Image.fromarray((mask.squeeze() > 0.5).astype(np.uint8) * 255)
+            # def sigmoid(x):
+            #     return 1 / (1 + np.exp(-x))
+          
+            mask_img = np.expand_dims(pr_masks.numpy().squeeze(), axis=-1)
+            print(mask_img)
+           
+            
             st.image(mask_img, caption="Predicted Mask", use_container_width=True)

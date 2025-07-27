@@ -6,9 +6,9 @@ train:
   batch_size: 32
   epochs: 300
   learning_rate: 0.001
-  model_output_path: "assets/landslide4sense_model_unet_efficientnet-b5.pt"
+  model_output_path: "assets/cas_landslide_uav_model_unet_resnet50/"
   metrics_output_path: "assets/validation_metrics.json"
-  model_type: "Landslide4Sense"  # Options: Landslide4Sense, CASLandslide
+  model_type: "CASLandslide"  # Options: Landslide4Sense, CASLandslide
   arch: "Unet"
   encoder_name: "efficientnet-b5"
   encoder_weights: "imagenet"   #[imagenet, ssl, swsl, instagram, imagenet+5k, imagenet+background, advprop, noisy-student, imagenet21k]
