@@ -4,7 +4,7 @@
 train:
   data_path: "./data/CAS_Landslide_Dataset_UAV"
   batch_size: 8
-  epochs: 1
+  epochs: 300
   learning_rate: 0.001
   model_output_path: "assets/cas_landslide_uav_model_unet_resnet50/"
   model_type: "CASLandslide"  # Options: Landslide4Sense, CASLandslide
@@ -38,6 +38,7 @@ export:
   learning_rate: 0.001
 
 deployment:
+  encoder_name: "resnet50"
   landslide4sense:
     model_path: "landslide4sense_model_unet_efficientnet-b5.onnx"
     input_shape: [1, 14, 128, 128]

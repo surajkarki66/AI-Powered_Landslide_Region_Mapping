@@ -2,16 +2,12 @@ import torch
 import onnx
 import onnxruntime
 import numpy as np
-
 import segmentation_models_pytorch as smp
 
-from src.models.Landslide4SenseModel import Landslide4SenseMappingModel
-from src.models.CASLandslideModel import CASLandslideMappingModel
 
 def export(config):
     # load the model
     model = smp.from_pretrained(config["model_path"])
-
     model.eval()
 
     # export to onnx
