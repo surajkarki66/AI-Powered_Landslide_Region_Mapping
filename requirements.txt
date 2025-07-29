@@ -11,3 +11,4 @@ pyyaml
 h5py
 rasterio
 scikit-image
+reportlab
