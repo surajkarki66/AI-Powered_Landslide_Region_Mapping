@@ -11,8 +11,14 @@ home_page = st.Page(
 
 uav_landslide_segmentation_page = st.Page(
     "src/views/uav_landslide_segmentation.py",
-    title="UAV Landslide Segmentation",
-    icon="🪨",
+    title="Segmentation (using UAV)",
+    icon="🚁",
+)
+
+satellite_landslide_segmentation_page = st.Page(
+    "src/views/satellite_landslide_segmentation.py",
+    title="Segmentation (using Satellite)",
+    icon="🛰️",
 )
 
 
@@ -20,7 +26,7 @@ uav_landslide_segmentation_page = st.Page(
 pg = st.navigation(
     {
         "Info": [home_page],
-        "Mapping": [uav_landslide_segmentation_page],
+        "Landslide Mapping": [uav_landslide_segmentation_page, satellite_landslide_segmentation_page],
     }
 )
 
