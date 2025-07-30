@@ -20,14 +20,14 @@ def load_model(model_path):
 
 # --- App UI ---
 st.set_page_config(page_title="Landslide Mapping", layout="wide")
-st.title("Landslide Mapping using UAV Imagery")
+st.title("Landslide Mapping using Satellite Imagery")
 
 # Instead of st.tabs, use radio for tab selection (keeps state)
 tab = st.radio("Select Mode", ["📷 Single Prediction", "📁 Batch Prediction"])
 
 with st.spinner("Loading the model..."):
     config = load_config()
-    model_path = config["deployment"]["caslandslide"]["uav"]["model_path"]
+    model_path = config["deployment"]["caslandslide"]["satellite"]["model_path"]
     model_session = load_model(model_path)
 
 
