@@ -1,49 +1,9 @@
 import os
-import cv2
 import h5py
 import rasterio
 import numpy as np
 
 from torch.utils.data import Dataset as BaseDataset
-
-
-class CAS_Landslide_Dataset(BaseDataset):
-    """
-    Binary Segmentation Dataset for Landslides.
-    Args:
-        images_dir (str): Path to input images folder.
-        masks_dir (str): Path to binary masks folder (pixel values: 0 for background, 1 for landslide).
-        augmentation (albumentations.Compose): Optional augmentations.
-    """
-
-    def __init__(self, images_dir, masks_dir, augmentation=None):
-        self.ids = os.listdir(images_dir)
-        self.images_fps = [os.path.join(images_dir, image_id) for image_id in self.ids]
-        self.masks_fps = [os.path.join(masks_dir, image_id) for image_id in self.ids]
-        self.augmentation = augmentation
-
-    def __getitem__(self, i):
-        # Read image and convert to RGB
-        image = cv2.imread(self.images_fps[i])
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-        # Read mask in grayscale
-        mask = cv2.imread(self.masks_fps[i], cv2.IMREAD_GRAYSCALE)
-
-        # Convert mask to binary (0 or 1)
-        mask = (mask > 0).astype("float32")
-        mask = np.expand_dims(mask, axis=-1)  # Shape: (H, W, 1)
-
-        # Apply augmentations
-        if self.augmentation:
-            sample = self.augmentation(image=image, mask=mask)
-            image, mask = sample["image"], sample["mask"]
-
-        # Transpose image from HWC to CHW
-        return image.transpose(2, 0, 1), mask.transpose(2, 0, 1)
-
-    def __len__(self):
-        return len(self.ids)
 
 
 class Landslide4SenseDataset(BaseDataset):
@@ -108,8 +68,7 @@ class Landslide4SenseDataset(BaseDataset):
         return len(self.ids)
 
 
-
-class CAS_Landslide_Dataset_TIFF(BaseDataset):
+class CAS_Landslide_Dataset(BaseDataset):
     """
     Binary Segmentation Dataset for Landslides using .tif images and masks.
     Args:
@@ -149,6 +108,38 @@ class CAS_Landslide_Dataset_TIFF(BaseDataset):
         image = image.transpose(2, 0, 1)  # (C, H, W)
         mask = mask.transpose(2, 0, 1)    # (1, H, W)
 
+        return image, mask
+
+    def __len__(self):
+        return len(self.ids)
+
+class CAS_Landslide_Dataset_Cross_Validation(BaseDataset):
+    def __init__(self, images_dir, masks_dir, indices=None, augmentation=None):
+        all_ids = sorted(os.listdir(images_dir))
+        if indices is not None:
+            self.ids = [all_ids[i] for i in indices]
+        else:
+            self.ids = all_ids
+        self.images_fps = [os.path.join(images_dir, fname) for fname in self.ids]
+        self.masks_fps = [os.path.join(masks_dir, fname) for fname in self.ids]
+        self.augmentation = augmentation
+
+    def __getitem__(self, i):
+        with rasterio.open(self.images_fps[i]) as src_img:
+            image = src_img.read()  # (C, H, W)
+        with rasterio.open(self.masks_fps[i]) as src_mask:
+            mask = src_mask.read(1)  # (H, W)
+
+        image = np.transpose(image, (1, 2, 0))  # (H, W, C)
+        mask = (mask > 0).astype("float32")
+        mask = np.expand_dims(mask, axis=-1)
+
+        if self.augmentation:
+            augmented = self.augmentation(image=image, mask=mask)
+            image, mask = augmented["image"], augmented["mask"]
+
+        image = image.transpose(2, 0, 1)
+        mask = mask.transpose(2, 0, 1)
         return image, mask
 
     def __len__(self):

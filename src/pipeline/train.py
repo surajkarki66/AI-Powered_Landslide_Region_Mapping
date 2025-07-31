@@ -9,7 +9,7 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 
-from src.utils.dataset import CAS_Landslide_Dataset_TIFF, Landslide4SenseDataset
+from src.utils.dataset import CAS_Landslide_Dataset, Landslide4SenseDataset
 from src.models.CASLandslideModel import CASLandslideMappingModel
 from src.models.Landslide4SenseModel import Landslide4SenseMappingModel
 
@@ -39,9 +39,9 @@ def train(config):
             loss_function_name=config["loss_function"],
         )
         # datasets
-        train_dataset = CAS_Landslide_Dataset_TIFF(x_train_dir, y_train_dir)
-        valid_dataset = CAS_Landslide_Dataset_TIFF(x_valid_dir, y_valid_dir)
-        test_dataset = CAS_Landslide_Dataset_TIFF(x_test_dir, y_test_dir)
+        train_dataset = CAS_Landslide_Dataset(x_train_dir, y_train_dir)
+        valid_dataset = CAS_Landslide_Dataset(x_valid_dir, y_valid_dir)
+        test_dataset = CAS_Landslide_Dataset(x_test_dir, y_test_dir)
 
     elif model_type == "Landslide4Sense":
         model = Landslide4SenseMappingModel(
