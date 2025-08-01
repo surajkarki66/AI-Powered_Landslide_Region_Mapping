@@ -104,7 +104,7 @@ def train(config):
     test(trainer, model, test_loader, config)
 
     # save the model
-    model.model.save_pretrained(config["model_output_path"], dataset=config["model_type"])
+    model.save_pretrained(config["model_output_path"], dataset=config["model_type"])
 
     # load the model
     restored_model = smp.from_pretrained(config["model_output_path"])

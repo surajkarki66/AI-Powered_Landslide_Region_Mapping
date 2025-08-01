@@ -12,3 +12,4 @@ h5py
 rasterio
 scikit-image
 reportlab
+scikit_learn

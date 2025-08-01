@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 
 
-from models.CASLandslideModel import CASLandslideMappingModel
+from src.models.CASLandslideModel import CASLandslideMappingModel
 from src.utils.dataset import CAS_Landslide_Dataset_Cross_Validation
 
 def run_cross_validation(config):
