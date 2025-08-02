@@ -59,13 +59,13 @@ cross_validation:
     patience: 15
 
 deployment:
-  encoder_name: "resnet50"
+  encoder_name: "vgg16_bn"
   landslide4sense:
     model_path: "landslide4sense_model_unet_efficientnet-b5.onnx"
     input_shape: [1, 14, 128, 128]
   caslandslide:
     uav:
-      model_path: "assets/cas_landslide_uav_model_unet_resnet50.onnx"
+      model_path: "assets/cas_landslide_uav_model_unet_vgg16_bn.onnx"
     satellite:
       model_path: "assets/cas_landslide_uav_model_unet_resnet50.onnx"
     input_shape: [1, 3, 512, 512]
