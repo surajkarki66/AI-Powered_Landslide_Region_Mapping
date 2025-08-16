@@ -193,3 +193,12 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 assets/**/*.onnx
+# Ignore everything in data
+data/*
+
+# But keep README.md
+!data/README.md
+
+# And keep test_data directory
+!data/test_data/
+

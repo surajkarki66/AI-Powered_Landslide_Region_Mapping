@@ -68,6 +68,69 @@ class Landslide4SenseDataset(BaseDataset):
         return len(self.ids)
 
 
+
+
+class Landslide4SenseDataset_CrossValidation(BaseDataset):
+    """
+    Cross-validation version of Landslide4SenseDataset.
+    
+    Args:
+        images_dir (str): Path to folder containing input HDF5 image files.
+        masks_dir (str): Path to folder containing corresponding HDF5 mask files.
+        indices (list, optional): List of indices to include in this dataset split.
+    """
+
+    def __init__(self, images_dir, masks_dir, indices=None):
+        # Get list of all file IDs
+        all_ids = sorted(os.listdir(images_dir))
+        
+        # Select subset if indices are provided
+        if indices is not None:
+            self.ids = [all_ids[i] for i in indices]
+        else:
+            self.ids = all_ids
+
+        # Construct full paths
+        self.images_fps = [os.path.join(images_dir, image_id) for image_id in self.ids]
+        self.masks_fps = [os.path.join(masks_dir, image_id) for image_id in self.ids]
+
+        # Precomputed mean and std for each of the 14 image channels
+        self.mean = [-0.4914, -0.3074, -0.1277, -0.0625, 0.0439, 0.0803, 0.0644,
+                     0.0802, 0.3000, 0.4082, 0.0823, 0.0516, 0.3338, 0.7819]
+        self.std =  [0.9325, 0.8775, 0.8860, 0.8869, 0.8857, 0.8418, 0.8354,
+                     0.8491, 0.9061, 1.6072, 0.8848, 0.9232, 0.9018, 1.2913]
+
+    def __getitem__(self, i):
+        # Load image
+        with h5py.File(self.images_fps[i], 'r') as hf:
+            image = hf['img'][:]
+
+        # Load mask
+        with h5py.File(self.masks_fps[i], 'r') as hf:
+            label = hf['mask'][:]
+
+        # Convert to float32
+        image = np.asarray(image, np.float32)
+        label = np.asarray(label, np.float32)
+
+        # Rearrange dimensions (H, W, C) -> (C, H, W)
+        image = image.transpose((-1, 0, 1))
+
+        # Add channel dimension to label
+        label = np.expand_dims(label, axis=0)
+
+        # Normalize each channel
+        for c in range(len(self.mean)):
+            image[c, :, :] -= self.mean[c]
+            image[c, :, :] /= self.std[c]
+
+        return image.copy(), label.copy()
+
+    def __len__(self):
+        return len(self.ids)
+
+
+
 class CAS_Landslide_Dataset(BaseDataset):
     """
     Binary Segmentation Dataset for Landslides using .tif images and masks.

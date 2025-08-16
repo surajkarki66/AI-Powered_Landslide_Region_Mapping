@@ -7,8 +7,9 @@ from torch.utils.data import DataLoader
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
 
 
+from src.models.Landslide4SenseModel import Landslide4SenseMappingModel
 from src.models.CASLandslideModel import CASLandslideMappingModel
-from src.utils.dataset import CAS_Landslide_Dataset_Cross_Validation
+from src.utils.dataset import CAS_Landslide_Dataset_Cross_Validation, Landslide4SenseDataset_CrossValidation
 
 def run_cross_validation(config):
     images_dir = config.get("images_dir")
@@ -22,7 +23,7 @@ def run_cross_validation(config):
     in_channels = config.get("in_channels")
     out_classes = config.get("out_classes")
     learning_rate = config.get("learning_rate")
-    loss_function_name = config.get("loss_function_name")
+    loss_function_name = config.get("loss_function")
     epochs = config.get("epochs")
     save_dir = config.get("save_dir")
     
@@ -44,8 +45,10 @@ def run_cross_validation(config):
             model = CASLandslideMappingModel(arch, encoder_name, encoder_weights, in_channels, out_classes, learning_rate, loss_function_name)
 
         else:
-            #TODO: for Landslide4Sense
-            pass
+            train_dataset = Landslide4SenseDataset_CrossValidation(images_dir, masks_dir, indices=train_idx)
+            test_dataset = Landslide4SenseDataset_CrossValidation(images_dir, masks_dir, indices=val_idx)
+            model = Landslide4SenseMappingModel(arch, encoder_name, encoder_weights, in_channels, out_classes, learning_rate, loss_function_name)
+
         
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
         test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=4)

@@ -1,5 +1,5 @@
 lightning
-segmentation-models-pytorch
+git+https://github.com/qubvel/segmentation_models.pytorch
 pandas
 matplotlib
 seaborn
