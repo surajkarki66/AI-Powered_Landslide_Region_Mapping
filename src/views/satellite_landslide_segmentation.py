@@ -55,7 +55,7 @@ if tab == "📷 Single Prediction":
                 img_np = st.session_state["input_tensor"]
                 ground_resolution = st.session_state["ground_resolution"]
 
-                params = smp.encoders.get_preprocessing_params(config.get("deployment").get("encoder_name"))
+                params = smp.encoders.get_preprocessing_params(config.get("deployment").get("caslandslide").get("satellite").get("encoder_name"))
                 mean = np.array(params["mean"]).reshape((1, 3, 1, 1))
                 std = np.array(params["std"]).reshape((1, 3, 1, 1))
                 img_tensor = ((img_np - mean) / std).astype(np.float32)
@@ -92,7 +92,7 @@ elif tab == "📁 Batch Prediction":
                 areas_km2 = []
                 filenames = []
 
-                params = smp.encoders.get_preprocessing_params(config["deployment"]["encoder_name"])
+                params = smp.encoders.get_preprocessing_params(config.get("deployment").get("caslandslide").get("satellite").get("encoder_name"))
                 mean = np.array(params["mean"]).reshape((1, 3, 1, 1))
                 std = np.array(params["std"]).reshape((1, 3, 1, 1))
 
@@ -106,7 +106,7 @@ elif tab == "📁 Batch Prediction":
                             image = Image.open(file)
 
                         resized_image = image.resize((512, 512))
-                        input_tensor = preprocess_image(resized_image, (512, 512))  # shape: (1, 3, 512, 512)
+                        input_tensor = preprocess_image(resized_image, (512, 512))  
 
                         # Normalize individually
                         normalized_tensor = ((input_tensor - mean) / std).astype(np.float32)

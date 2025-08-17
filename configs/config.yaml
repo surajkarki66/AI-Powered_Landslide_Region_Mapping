@@ -25,15 +25,15 @@ train:
 
 # Export Configuration
 export:
-  model_path: "assets/cas_landslide_uav_model_unet_mobilenet_v2/"
-  onnx_model_output_path: "assets/cas_landslide_uav_model_unet_mobilenet_v2.onnx"
-  input_shape: [1, 3, 512, 512]
-  model_type: "CASLandslide"  # Options: Landslide4Sense, CASLandslide
+  model_path: "assets/landslide4sense_model_unet_mobilenetv2"
+  onnx_model_output_path: "assets/landslide4sense_model_unet_mobilenetv2.onnx"
+  input_shape: [1, 14, 128, 128]
+  model_type: "Landslide4Sense"  # Options: Landslide4Sense, CASLandslide
   arch: "Unet"
   encoder_name: "mobilenet_v2"
   encoder_weights: "imagenet"
   loss_function: "FocalLoss"
-  in_channels: 3
+  in_channels: 14
   out_classes: 1
   learning_rate: 0.001
 
@@ -59,14 +59,16 @@ cross_validation:
     patience: 30
 
 deployment:
-  encoder_name: "vgg16_bn"
   landslide4sense:
-    model_path: "landslide4sense_model_unet_efficientnet-b5.onnx"
+    model_path: "assets/landslide4sense_model_unet_mobilenetv2.onnx"
+    encoder_name: "mobilenet_v2"
     input_shape: [1, 14, 128, 128]
   caslandslide:
+    input_shape: [1, 3, 512, 512]
     uav:
       model_path: "assets/cas_landslide_uav_model_unet_vgg16_bn.onnx"
+      encoder_name: "vgg16_bn"
     satellite:
-      model_path: "assets/cas_landslide_uav_model_unet_resnet50.onnx"
-    input_shape: [1, 3, 512, 512]
+      model_path: "assets/cas_landslide_satellite_model_unet_resnet50.onnx"
+      encoder_name: "resnet50"
 
