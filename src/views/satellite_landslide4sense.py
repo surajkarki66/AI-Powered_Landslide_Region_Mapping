@@ -47,7 +47,7 @@ if tab == "📂 Single Prediction":
             st.session_state["input_array"] = img_tensor
             st.session_state["ground_resolution"] = ground_resolution
             st.session_state["img_np"] = img_np
-            st.success("✅ File loaded successfully!")
+            st.success(f"✅ File '{uploaded_file.name}' loaded.")
         except Exception as e:
             st.error(f"❌ Failed to load HDF5 file: {e}")
 
@@ -63,18 +63,21 @@ if tab == "📂 Single Prediction":
                 mask_binary = (mask_probs > 0.5).astype(np.uint8)
                 rgb_img = create_rgb_composite(st.session_state["img_np"])
                 overlay_img = overlay_mask(rgb_img, mask_binary)
+                pixel_area_m2 = st.session_state["ground_resolution"] ** 2
+                landslide_pixel_count = np.sum(mask_binary > 0)
+                total_area_m2 = landslide_pixel_count * pixel_area_m2
+                total_area_km2 = total_area_m2 / 1e6
+
+                st.success(f"Estimated Landslide Area: {total_area_m2:.2f} m² ({total_area_km2:.6f} km²)")
+
                 col1, col2, col3 = st.columns(3)
                 with col1:
                     st.image(rgb_img, caption="RGB of Input", use_container_width=True)
                 with col2:
                     st.image((mask_binary*255).squeeze(), caption="Predicted Mask", use_container_width=True, clamp=True)
                 with col3:
-                    st.image(overlay_img, caption="Overlay on Input", use_container_width=True)
-                pixel_area_m2 = st.session_state["ground_resolution"] ** 2
-                landslide_pixel_count = np.sum(mask_binary > 0)
-                total_area_m2 = landslide_pixel_count * pixel_area_m2
-                total_area_km2 = total_area_m2 / 1e6
-                st.success(f"Estimated Landslide Area: {total_area_m2:.2f} m² ({total_area_km2:.6f} km²)")
+                    st.image(overlay_img, caption="Overlay", use_container_width=True)
+                
 
 elif tab == "📁 Batch Prediction":
     uploaded_files = st.file_uploader("Upload multiple HDF5 files", type=["h5"], accept_multiple_files=True)

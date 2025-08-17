@@ -23,8 +23,8 @@ satellite_landslide_segmentation_page = st.Page(
 
 satellite_landslide4segmentation_page = st.Page(
     "src/views/satellite_landslide4sense.py",
-    title="Segmentation (using Satellite Landslide4Sense)",
-    icon="🚁",
+    title="Segmentation (using Satellite)",
+    icon="🛰️",
 )
 
 
@@ -32,7 +32,8 @@ satellite_landslide4segmentation_page = st.Page(
 pg = st.navigation(
     {
         "Info": [home_page],
-        "Landslide Mapping": [uav_landslide_segmentation_page, satellite_landslide_segmentation_page, satellite_landslide4segmentation_page],
+        "Landslide Mapping (CAS)": [uav_landslide_segmentation_page, satellite_landslide_segmentation_page],
+        "Landslide Mapping (Landslide4Sense)": [satellite_landslide4segmentation_page],
     }
 )
 
