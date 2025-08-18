@@ -38,7 +38,7 @@ pg = st.navigation(
 )
 
 st.sidebar.markdown(
-    "[🔗 GitHub Repository](https://github.com/surajkarki66/Landslide_Mapping_from_Satellite_Imagery)",
+    "[🔗 GitHub Repository](https://github.com/surajkarki66/AI-Powered_Landslide_Region_Mapping_using_Semantic_Segmentation)",
     unsafe_allow_html=True
 )
 

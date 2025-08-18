@@ -13,3 +13,5 @@ rasterio
 scikit-image
 reportlab
 scikit_learn
+streamlit
+streamlit-option-menu

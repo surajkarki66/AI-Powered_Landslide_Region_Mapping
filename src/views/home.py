@@ -21,9 +21,9 @@ with col2:
                 <li>📏 Calculates the estimated landslide area based on ground resolution</li>
                 <li>⚠️ Each model expects specific input data:
                     <ul>
-                        <li>CAS Landslide Segmentation (Satellite): Test Data -> <a href="https://example.com/cas-satellite-test" target="_blank">here</a></li>
-                        <li>CAS Landslide Segmentation (UAV): Test Data -> <a href="https://example.com/cas-uav-test" target="_blank">here</a></li>
-                        <li>Landslide4Segmentation (Satellite): Test Data -> <a href="https://example.com/landslide4sense-test" target="_blank">here</a></li>
+                        <li>CAS Landslide Segmentation (Satellite): Test Data -> <a href="https://github.com/surajkarki66/AI-Powered_Landslide_Region_Mapping_using_Semantic_Segmentation/tree/main/data/test_data/CAS_Landslide_Satellite_Test_Data" target="_blank">here</a></li>
+                        <li>CAS Landslide Segmentation (UAV): Test Data -> <a href="https://github.com/surajkarki66/AI-Powered_Landslide_Region_Mapping_using_Semantic_Segmentation/tree/main/data/test_data/CAS_Landslide_UAV_Test_Data" target="_blank">here</a></li>
+                        <li>Landslide4Segmentation (Satellite): Test Data -> <a href="https://github.com/surajkarki66/AI-Powered_Landslide_Region_Mapping_using_Semantic_Segmentation/tree/main/data/test_data/Landslide4Sense_Test_Data" target="_blank">here</a></li>
                     </ul>
                 </li>
             </ul>
