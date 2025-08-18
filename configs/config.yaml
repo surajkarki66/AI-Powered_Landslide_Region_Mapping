@@ -4,16 +4,16 @@
 train:
   data_path: "./data/CAS_Landslide_Dataset_UAV"
   batch_size: 8
-  epochs: 1
+  epochs: 300
   learning_rate: 0.001
-  model_output_path: "assets/cas_landslide_uav_model_unet_mobilenet_v2/"
+  model_output_path: "assets/cas_landslide_uav_model_unet++_resnet50"
   model_type: "CASLandslide"  # Options: Landslide4Sense, CASLandslide
-  arch: "Unet"
-  encoder_name: "mobilenet_v2"
-  encoder_weights: "imagenet"   #[imagenet, ssl, swsl, instagram, imagenet+5k, imagenet+background, advprop, noisy-student, imagenet21k]
+  arch: "Unetplusplus"
+  encoder_name: "resnet50"
+  encoder_weights: "imagenet"   # [imagenet, ssl, swsl, instagram, imagenet+5k, imagenet+background, advprop, noisy-student, imagenet21k]
   in_channels: 3
   out_classes: 1
-  loss_function: "FocalLoss"                         #[DiceLoss, JaccardLoss, TverskyLoss, FocalLoss, SoftBCE, MCCLoss]
+  loss_function: "FocalLoss"                         # [DiceLoss, JaccardLoss, TverskyLoss, FocalLoss, SoftBCE, MCCLoss]
   accelerator: "gpu"
   devices: "auto"
   default_root_dir: "assets/checkpoints"
@@ -25,12 +25,12 @@ train:
 
 # Export Configuration
 export:
-  model_path: "assets/cas_landslide_satellite_model_unet_densenet161"
-  onnx_model_output_path: "assets/cas_landslide_satellite_model_unet_densenet161.onnx"
+  model_path: "assets/cas_landslide_uav_model_unet++_resnet50"
+  onnx_model_output_path: "assets/cas_landslide_uav_model_unet++_resnet50.onnx"
   input_shape: [1, 3, 512, 512]
   model_type: "CASLandslide"  # Options: Landslide4Sense, CASLandslide
-  arch: "Unet"
-  encoder_name: "densenet161"
+  arch: "Unetplusplus"
+  encoder_name: "resnet50"
   encoder_weights: "imagenet"
   loss_function: "FocalLoss"
   in_channels: 3
@@ -39,25 +39,26 @@ export:
 
 # Cross-validation Configuration
 cross_validation:
-  images_dir: "./data/CAS_Landslide_Dataset_Satellite_Cross_Validation/img/"
-  masks_dir: "./data/CAS_Landslide_Dataset_Satellite_Cross_Validation/mask/"
+  images_dir: "./data/CAS_Landslide_Dataset_UAV_Cross_Validation/img/"
+  masks_dir: "./data/CAS_Landslide_Dataset_UAV_Cross_Validation/mask/"
   num_folds: 5
   model_type: "CASLandslide"  # Options: Landslide4Sense, CASLandslide
   batch_size: 8
-  arch: "Unet"
-  encoder_name: "densenet161"
+  arch: "Unetplusplus"
+  encoder_name: "resnet50"
   encoder_weights: "imagenet"   #[imagenet, ssl, swsl, instagram, imagenet+5k, imagenet+background, advprop, noisy-student, imagenet21k]
   in_channels: 3
   out_classes: 1
   learning_rate: 0.001
   loss_function: "FocalLoss"                         #[DiceLoss, JaccardLoss, TverskyLoss, FocalLoss, SoftBCE, MCCLoss]
-  epochs: 1
+  epochs: 300
   save_dir: "assets/cross_validation_metrics.csv"
   early_stopping:
     monitor: "valid_dataset_iou"
     mode: "max"
     patience: 30
 
+# Deployment Configuration
 deployment:
   landslide4sense:
     model_path: "assets/landslide4sense_model_unet_mobilenetv2.onnx"
