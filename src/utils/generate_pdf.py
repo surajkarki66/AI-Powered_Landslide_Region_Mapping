@@ -6,7 +6,20 @@ from io import BytesIO
 from PIL import Image
 import numpy as np
 
-def generate_landslide_pdf(images, masks, overlays, filenames, areas_m2, areas_km2):
+def generate_landslide_pdf(images, masks, overlays, filenames, areas_m2):
+    """
+    Generate a PDF report for landslide detection results.
+
+    Args:
+        images (list[np.ndarray or PIL.Image]): List of input images.
+        masks (list[np.ndarray or PIL.Image]): List of predicted masks.
+        overlays (list[np.ndarray or PIL.Image]): List of overlay images.
+        filenames (list[str]): List of corresponding filenames.
+        areas_m2 (list[float]): List of landslide areas in square meters.
+    
+    Returns:
+        BytesIO: In-memory PDF file.
+    """
     buffer = BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=A4)
     page_width, page_height = A4
@@ -18,7 +31,8 @@ def generate_landslide_pdf(images, masks, overlays, filenames, areas_m2, areas_k
     col_width = (page_width - 3 * margin_x) / 2
     row_height = (page_height - 4 * margin_y - 1.5 * vertical_gap) / 2
 
-    for img, mask, overlay, name, m2, km2 in zip(images, masks, overlays, filenames, areas_m2, areas_km2):
+    for img, mask, overlay, name, m2 in zip(images, masks, overlays, filenames, areas_m2):
+        # Convert images to PIL if they are numpy arrays
         if isinstance(img, np.ndarray):
             if img.dtype != np.uint8:
                 img = (img * 255).astype(np.uint8)
@@ -38,11 +52,13 @@ def generate_landslide_pdf(images, masks, overlays, filenames, areas_m2, areas_k
                 overlay = np.transpose(overlay, (1, 2, 0))
             overlay = Image.fromarray(overlay)
 
+        # Draw filename
         pdf.setFont("Helvetica-Bold", 14)
         filename_text = f"Filename: {name}"
         pdf.drawString((page_width - pdf.stringWidth(filename_text, "Helvetica-Bold", 14)) / 2,
                        page_height - margin_y, filename_text)
 
+        # Draw landslide area in m²
         pdf.setFont("Helvetica-Bold", 12)
         area_text = f"Landslide Area: {m2:.2f} m²"
         pdf.drawString((page_width - pdf.stringWidth(area_text, "Helvetica", 12)) / 2,
@@ -50,7 +66,8 @@ def generate_landslide_pdf(images, masks, overlays, filenames, areas_m2, areas_k
 
         # Top row: RGB (left) and Mask (right)
         y_top = page_height - margin_y - 3 * vertical_gap - 0.5 * row_height
-        for pil_img, x_pos, title in zip([img, mask], [margin_x, margin_x + col_width + horizontal_gap], ["Input Image", "Predicted Mask"]):
+        for pil_img, x_pos, title in zip([img, mask], [margin_x, margin_x + col_width + horizontal_gap],
+                                         ["Input Image", "Predicted Mask"]):
             pdf.setFont("Helvetica-Bold", 12)
             pdf.drawString(x_pos + (col_width - pdf.stringWidth(title, "Helvetica-Bold", 12)) / 2,
                            y_top + 0.5 * row_height, title)

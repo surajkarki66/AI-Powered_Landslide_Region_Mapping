@@ -5,7 +5,6 @@ import numpy as np
 from src.utils.utils import sigmoid, preprocess_h5, load_config, create_rgb_composite, overlay_mask
 from src.utils.generate_pdf import generate_landslide_pdf
 
-
 MEAN = np.array([
     -0.4914, -0.3074, -0.1277, -0.0625,
      0.0439,  0.0803,  0.0644,  0.0802,
@@ -34,10 +33,14 @@ with st.spinner("Loading the model..."):
     model_path = config["deployment"]["landslide4sense"]["model_path"]
     model_session = load_model(model_path)
 
+# --- SINGLE PREDICTION ---
 if tab == "📂 Single Prediction":
     uploaded_file = st.file_uploader("Upload an HDF5 File", type=["h5"])
-    ground_resolution = st.number_input("Ground resolution (meters/pixel)", min_value=0.1,
-                                        max_value=100.0, value=1.0, step=0.1, format="%.2f")
+    ground_resolution = st.number_input(
+        "Ground resolution (meters/pixel)",
+        min_value=0.1, max_value=100.0,
+        value=1.0, step=0.1, format="%.2f"
+    )
 
     if uploaded_file:
         try:
@@ -66,9 +69,8 @@ if tab == "📂 Single Prediction":
                 pixel_area_m2 = st.session_state["ground_resolution"] ** 2
                 landslide_pixel_count = np.sum(mask_binary > 0)
                 total_area_m2 = landslide_pixel_count * pixel_area_m2
-                total_area_km2 = total_area_m2 / 1e6
 
-                st.success(f"Estimated Landslide Area: {total_area_m2:.2f} m² ({total_area_km2:.6f} km²)")
+                st.success(f"Estimated Landslide Area: {total_area_m2:.2f} m²")
 
                 col1, col2, col3 = st.columns(3)
                 with col1:
@@ -77,19 +79,24 @@ if tab == "📂 Single Prediction":
                     st.image((mask_binary*255).squeeze(), caption="Predicted Mask", use_container_width=True, clamp=True)
                 with col3:
                     st.image(overlay_img, caption="Overlay", use_container_width=True)
-                
 
+# --- BATCH PREDICTION ---
 elif tab == "📁 Batch Prediction":
-    uploaded_files = st.file_uploader("Upload multiple HDF5 files", type=["h5"], accept_multiple_files=True)
-    batch_ground_resolution = st.number_input("Ground resolution for all (meters/pixel)", min_value=0.1,
-                                             max_value=100.0, value=1.0, step=0.1, format="%.2f", key="batch_res_h5")
+    uploaded_files = st.file_uploader(
+        "Upload multiple HDF5 files", type=["h5"], accept_multiple_files=True
+    )
+    batch_ground_resolution = st.number_input(
+        "Ground resolution for all (meters/pixel)",
+        min_value=0.1, max_value=100.0,
+        value=1.0, step=0.1, format="%.2f", key="batch_res_h5"
+    )
 
     if st.button("Run Batch Segmentation"):
         if not uploaded_files:
             st.warning("⚠️ Please upload at least one HDF5 file.")
         else:
             with st.spinner("Running batch segmentation..."):
-                processed_masks, overlay_images, areas_m2, areas_km2, filenames, rgb_images = [], [], [], [], [], []
+                processed_masks, overlay_images, areas_m2, filenames, rgb_images = [], [], [], [], []
                 preprocessed_batch = []
 
                 for file in uploaded_files:
@@ -118,19 +125,18 @@ elif tab == "📁 Batch Prediction":
                         landslide_pixel_count = np.sum(mask_binary > 0)
                         pixel_area_m2 = batch_ground_resolution ** 2
                         total_area_m2 = landslide_pixel_count * pixel_area_m2
-                        total_area_km2 = total_area_m2 / 1e6
+
                         processed_masks.append((mask_binary*255).squeeze())
                         overlay_images.append(overlay_img)
                         areas_m2.append(total_area_m2)
-                        areas_km2.append(total_area_km2)
 
+                    # Generate PDF without km²
                     pdf_bytes = generate_landslide_pdf(
                         images=rgb_images,
                         masks=processed_masks,
                         overlays=overlay_images,
                         filenames=filenames,
-                        areas_m2=areas_m2,
-                        areas_km2=areas_km2
+                        areas_m2=areas_m2
                     )
 
                     st.success("✅ Batch segmentation completed!")

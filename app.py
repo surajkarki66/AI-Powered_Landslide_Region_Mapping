@@ -32,9 +32,14 @@ satellite_landslide4segmentation_page = st.Page(
 pg = st.navigation(
     {
         "Info": [home_page],
-        "Landslide Mapping (CAS)": [uav_landslide_segmentation_page, satellite_landslide_segmentation_page],
-        "Landslide Mapping (Landslide4Sense)": [satellite_landslide4segmentation_page],
+        "Mapping (CAS)": [uav_landslide_segmentation_page, satellite_landslide_segmentation_page],
+        "Mapping (Landslide4Sense)": [satellite_landslide4segmentation_page],
     }
+)
+
+st.sidebar.markdown(
+    "[🔗 GitHub Repository](https://github.com/surajkarki66/Landslide_Mapping_from_Satellite_Imagery)",
+    unsafe_allow_html=True
 )
 
 # --- SHARED ON ALL PAGES ---
