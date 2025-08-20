@@ -1,6 +1,8 @@
 import h5py
 import yaml
 import cv2
+import os
+import requests
 import numpy as np
 import rasterio
 import matplotlib.pyplot as plt
@@ -136,3 +138,39 @@ def load_config() -> Dict[str, Any]:
     """
     with open("configs/config.yaml", "r") as f:
         return yaml.safe_load(f)
+
+
+def download_models(save_dir="assets"):
+    """
+    Downloads multiple files from given URLs into the specified directory.
+    Skips files that already exist.
+
+    Args:
+        urls (list of str): List of file URLs to download
+        save_dir (str): Directory to save downloaded files
+    """
+    model_urls = [
+        "https://github.com/surajkarki66/AI-Powered_Landslide_Region_Mapping/releases/download/LandslideSegmentationModels_v1.0/cas_landslide_satellite_model_unet_densenet161.onnx",
+        "https://github.com/surajkarki66/AI-Powered_Landslide_Region_Mapping/releases/download/LandslideSegmentationModels_v1.0/cas_landslide_uav_model_unet++_resnet50.onnx",
+        "https://github.com/surajkarki66/AI-Powered_Landslide_Region_Mapping/releases/download/LandslideSegmentationModels_v1.0/landslide4sense_model_unet_mobilenetv2.onnx",
+    ]
+    for url in model_urls:
+        filename = url.split("/")[-1]  # Keep original filename
+        save_path = os.path.join(save_dir, filename)
+
+        # Skip if file already exists
+        if os.path.exists(save_path):
+            print(f"✅ Skipped (already exists): {save_path}")
+            continue
+
+        print(f"⬇️ Downloading {filename}...")
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+
+        # Write file in chunks for memory efficiency
+        with open(save_path, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    f.write(chunk)
+
+        print(f"✅ Downloaded to {save_path}")

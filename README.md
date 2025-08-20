@@ -89,7 +89,7 @@ python main.py export
 
 ### Running the Application
 
-First, you need to make sure that all the [pre-trained models](https://github.com/surajkarki66/AI-Powered_Landslide_Region_Mapping_using_Semantic_Segmentation/releases/tag/LandslideSegmentationModels_v1.0) are inside the assets directory.
+First, you need to download all the [pre-trained models](https://github.com/surajkarki66/AI-Powered_Landslide_Region_Mapping_using_Semantic_Segmentation/releases/tag/LandslideSegmentationModels_v1.0) and placed them inside the assets directory.
 
 To launch the interactive Streamlit app for landslide region mapping:
 
