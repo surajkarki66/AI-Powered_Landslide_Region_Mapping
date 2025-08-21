@@ -107,6 +107,3 @@ python -m streamlit run app.py
 - Training, validation, and testing metrics are stored in `assets/`.
 - Plots and visualizations are saved in `assets/plots/`.
 
-## Pretrained Models
-
-You can download the pretrained models used in this project: [Download from here](https://github.com/surajkarki66/AI-Powered_Landslide_Region_Mapping_using_Semantic_Segmentation/releases/tag/LandslideSegmentationModels_v1.0)
