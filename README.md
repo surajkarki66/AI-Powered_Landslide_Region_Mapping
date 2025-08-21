@@ -102,8 +102,8 @@ python -m streamlit run app.py
 
 ---
 
-## Results & Assets
-
-- Training, validation, and testing metrics are stored in `assets/`.
-- Plots and visualizations are saved in `assets/plots/`.
+## Results
+- Results of training, testing cross-validation of different models using CAS LANDSLIDE DATASET (UAV): https://drive.google.com/drive/folders/14RgcVSGZQITB6Kr225ZBBL_kVOwUb_L7
+- Results of training, testing cross-validation of different models using CAS LANDSLIDE DATASET (Satellite): https://drive.google.com/drive/folders/18iRsnAT7VtB0DBpdMv1XW5m5eAI67ml3
+- Results of training, testing cross-validation of different models using LANDSLIDE4SENSE DATASET (Satellite): https://drive.google.com/drive/folders/1kx3PE8OjQAdeSY55L-80fjDuaGewYr5C?usp=sharing
 
